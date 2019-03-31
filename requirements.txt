@@ -1,3 +1,4 @@
 pip3 install cassandra-driver
 pip3 install scales
 pip3 install coloredlogs
+pip3 install faker
