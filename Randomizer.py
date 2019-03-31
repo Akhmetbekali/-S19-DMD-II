@@ -8,7 +8,6 @@ import time
 
 def strTimeProp(start, end, format, prop):
     """Get a time at a proportion of a range of two formatted times.
-
     start and end should be strings specifying times formated in the
     given format (strftime-style), giving an interval [start, end].
     prop specifies how a proportion of the interval to be taken after
@@ -64,8 +63,39 @@ session.execute('TRUNCATE TABLE ESAS.Grades;')
 session.execute('TRUNCATE TABLE ESAS.Students;')
 
 fake = Faker()
-MAX = 3  # Here you can set the max
+MAX = 1000 # Here you can set the max
 typesOfUsers = ['null','school principal', 'clerk', 'class teacher']
+arrayOfTeachers = []
+for i in range(1, 44+1):
+    zbr = fake.profile()
+    while not zbr['name'].find(' '):
+        zbr = fake.profile()
+    hPass = fake.password().__hash__()
+    username = zbr['username']
+    email = fake.email()
+    userType = weighted_choice([97, 1, 1, 1],typesOfUsers)
+    phone = random_phone_number()
+    birthday = fake.date_of_birth(tzinfo=None, minimum_age=25, maximum_age=88)
+    # print(birthday)
+    address = zbr['address']
+    photo = fake.url() + username+'.PNG'
+    pLVL = 1
+    nomes = zbr['name'].split(' ')
+    fname, sname = 0, 0
+    if len(nomes) == 3:
+        fname = nomes[0]
+        sname = nomes[1] + nomes[2]
+    else:
+        fname = nomes[0]
+        sname = nomes[1]
+    teacher = zbr['name']
+    arrayOfTeachers.append(teacher)
+    zinj = """INSERT INTO %s ( login, hashedPass, name, surname, userType, email, phone, birthday, address, photo, permissionLvl)
+        VALUES ('%s', '%s', '%s','%s', '%s', '%s','%s', '%s', '%s', '%s', %s);""" % (TABLE_USERS, username, hPass, fname,
+                                                                                     sname, userType, email, phone,
+                                                                                    birthday, address, photo, pLVL)
+    session.execute(zinj)
+
 
 for i in range(1, MAX+1):
 
@@ -109,13 +139,8 @@ for i in range(1, MAX+1):
     subject = random.choice(['Math','Physics','Chemistry','Biology','Sexual Education','Informatics','Arabic','English','French'])
     midGrade = random.randint(20, 100)
     finalGrade = random.randint(20,100)
-    overallGrade = int((midGrade +finalGrade )/2)
-    teacher = fake.profile()['name']
-    zinj = """INSERT INTO %s ( login, hashedPass, name, surname, userType, email, phone, birthday, address, photo, permissionLvl)
-        VALUES ('%s', '%s', '%s','%s', '%s', '%s','%s', '%s', '%s', '%s', %s);""" % (TABLE_USERS, username, hPass, fname,
-                                                                                     sname, userType, email, phone,
-                                                                                     birthday, address, photo, pLVL)
-    session.execute(zinj)
+    overallGrade = int((midGrade +finalGrade)/2)
+    teacher = random.choice(arrayOfTeachers)
 
     zinj = """INSERT INTO %s ( sId,sName,sSurname,sAddress,sEmail,sPhone,sBirthday,sPhoto
     ,isFullFamily,p1FullName,p1Phone,p2FullName,p2Phone,financialCase
@@ -141,7 +166,6 @@ print('Time taken to generate tests is : ' + str(time.time()-t1) + ' SECONDS')
 
 
 '''
-
 login, hashedPass, name, surname, userType,
 email, phone, birthday, address, photo,
 permissionLvl,sId,sName,sSurname,sAddress,sEmail,sPhone,sBirthday,sPhoto
