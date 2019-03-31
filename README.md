@@ -1,6 +1,6 @@
 # -S19-DMD-II
 
-## Cassandra Project for DataBases and Modeling Class 2019
+## Cassandra Project for Databases and Data Modeling Class 2019
 
 In the project we have created database schema that best suits apache cassandra,
 
