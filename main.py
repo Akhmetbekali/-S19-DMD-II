@@ -1,11 +1,13 @@
 import coloredlogs, logging
+
 coloredlogs.install()
 
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)   # some cassandra shit is deprecated in python 3.7, suspend it
+
+warnings.filterwarnings("ignore",
+                        category=DeprecationWarning)  # some cassandra shit is deprecated in python 3.7, suspend it
 
 from cassandra.cluster import Cluster
-
 
 cluster = Cluster()
 session = cluster.connect()
@@ -15,8 +17,12 @@ TABLE_USERS = KEYSPACE + '.Users'
 TABLE_STUDENTS = KEYSPACE + '.Students'
 TABLE_GRADES = KEYSPACE + '.Grades'
 
-
 # Keyspace
+'''
+session.execute("DROP TABLE ESAS.Grades;")
+session.execute("DROP TABLE ESAS.Students;")
+session.execute("DROP TABLE ESAS.Users;")
+'''
 
 logging.info("Creating keyspace %s ..." % KEYSPACE)
 session.execute("""
@@ -24,10 +30,8 @@ session.execute("""
         WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '2' }
         """ % KEYSPACE)
 
-
 logging.info("Setting keyspace %s ..." % KEYSPACE)
 session.execute('USE %s' % KEYSPACE)
-
 
 # Users
 
@@ -45,7 +49,7 @@ session.execute("""
             address ascii,
             photo ascii,
             permissionLvl tinyint,
-            
+
             PRIMARY KEY ((userType), surname, name)
         );
         """ % TABLE_USERS)
@@ -53,7 +57,6 @@ session.execute("""
 logging.info("Creating indexes for %s ..." % TABLE_USERS)
 session.execute('CREATE INDEX IF NOT EXISTS i_login ON %s (login);' % TABLE_USERS)
 session.execute('CREATE INDEX IF NOT EXISTS i_hashedPass ON %s (hashedPass);' % TABLE_USERS)
-
 
 # Students
 
@@ -77,7 +80,7 @@ session.execute("""
             medicalConditions text,
             studyYear tinyint,
             studyGroup text,
-            
+
             PRIMARY KEY ((studyYear, studyGroup), sSurname, sName)
         );
         """ % TABLE_STUDENTS)
@@ -86,7 +89,6 @@ logging.info("Creating indexes for %s ..." % TABLE_STUDENTS)
 session.execute('CREATE INDEX IF NOT EXISTS i_sId ON %s (sId);' % TABLE_STUDENTS)
 session.execute('CREATE INDEX IF NOT EXISTS i_isFullFamily ON %s (isFullFamily);' % TABLE_STUDENTS)
 session.execute('CREATE INDEX IF NOT EXISTS i_financialCase ON %s (financialCase);' % TABLE_STUDENTS)
-
 
 # Grades
 
@@ -97,9 +99,9 @@ session.execute("""
             sName ascii, 
             sSurname ascii, 
             subject ascii, 
-            midGrade ascii,
-            finalGrade ascii,
-            overallGrade ascii,
+            midGrade int,
+            finalGrade int,
+            overallGrade int,
             teacher ascii,
             p1FullName ascii,
             p1Phone text,
@@ -107,7 +109,6 @@ session.execute("""
             p2Phone text,
             studyYear tinyint,
             studyGroup text,
-
             PRIMARY KEY ((studyYear, studyGroup), subject, overallGrade, sSurname, sName)
         );
         """ % TABLE_GRADES)
@@ -117,12 +118,6 @@ session.execute('CREATE INDEX IF NOT EXISTS i_midGrade ON %s (midGrade);' % TABL
 session.execute('CREATE INDEX IF NOT EXISTS i_finalGrade ON %s (finalGrade);' % TABLE_GRADES)
 session.execute('CREATE INDEX IF NOT EXISTS i_teacher ON %s (teacher);' % TABLE_GRADES)
 
-
-
-
-
-
-
 # That's examples for you:
 
 # Key fields must be inserted
@@ -131,7 +126,7 @@ session.execute("""
     INSERT INTO %s (login, hashedPass, userType, surname, name)
     VALUES ('%s', '%s', '%s', 'Name', 'Surname')
     """ % (TABLE_USERS, 'John', 123, 'SuperType')
-)
+                )
 
 rows = session.execute('SELECT * FROM %s;' % TABLE_USERS)
 for row in rows:

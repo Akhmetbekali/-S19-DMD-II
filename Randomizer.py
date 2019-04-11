@@ -6,6 +6,7 @@ import uuid
 import math
 import time
 
+
 def strTimeProp(start, end, format, prop):
     """Get a time at a proportion of a range of two formatted times.
     start and end should be strings specifying times formated in the
@@ -28,8 +29,8 @@ def randomDate(start, end, prop):
 
 def random_phone_number():
     n = 10
-    range_start = 10**(n-1)
-    range_end = (10**n)-1
+    range_start = 10 ** (n - 1)
+    range_end = (10 ** n) - 1
     countries = ['+963', '+7', '+1']
     zbr = randint(range_start, range_end)
     return random.choice(countries) + str(zbr)
@@ -63,22 +64,22 @@ session.execute('TRUNCATE TABLE ESAS.Grades;')
 session.execute('TRUNCATE TABLE ESAS.Students;')
 
 fake = Faker()
-MAX = 1000 # Here you can set the max
-typesOfUsers = ['null','school principal', 'clerk', 'class teacher']
+MAX = 1000  # Here you can set the max
+typesOfUsers = ['null', 'school principal', 'clerk', 'class teacher']
 arrayOfTeachers = []
-for i in range(1, 44+1):
+for i in range(1, 44 + 1):
     zbr = fake.profile()
     while not zbr['name'].find(' '):
         zbr = fake.profile()
     hPass = fake.password().__hash__()
     username = zbr['username']
     email = fake.email()
-    userType = weighted_choice([97, 1, 1, 1],typesOfUsers)
+    userType = weighted_choice([97, 1, 1, 1], typesOfUsers)
     phone = random_phone_number()
     birthday = fake.date_of_birth(tzinfo=None, minimum_age=25, maximum_age=88)
     # print(birthday)
     address = zbr['address']
-    photo = fake.url() + username+'.PNG'
+    photo = fake.url() + username + '.PNG'
     pLVL = 1
     nomes = zbr['name'].split(' ')
     fname, sname = 0, 0
@@ -91,13 +92,13 @@ for i in range(1, 44+1):
     teacher = zbr['name']
     arrayOfTeachers.append(teacher)
     zinj = """INSERT INTO %s ( login, hashedPass, name, surname, userType, email, phone, birthday, address, photo, permissionLvl)
-        VALUES ('%s', '%s', '%s','%s', '%s', '%s','%s', '%s', '%s', '%s', %s);""" % (TABLE_USERS, username, hPass, fname,
-                                                                                     sname, userType, email, phone,
-                                                                                    birthday, address, photo, pLVL)
+        VALUES ('%s', '%s', '%s','%s', '%s', '%s','%s', '%s', '%s', '%s', %s);""" % (
+    TABLE_USERS, username, hPass, fname,
+    sname, userType, email, phone,
+    birthday, address, photo, pLVL)
     session.execute(zinj)
 
-
-for i in range(1, MAX+1):
+for i in range(1, MAX + 1):
 
     zbr = fake.profile()
     while not zbr['name'].find(' '):
@@ -106,7 +107,7 @@ for i in range(1, MAX+1):
     username = zbr['username']
 
     nomes = zbr['name'].split(' ')
-    fname, sname = 0,0
+    fname, sname = 0, 0
     if len(nomes) == 3:
         fname = nomes[0]
         sname = nomes[1] + nomes[2]
@@ -115,11 +116,11 @@ for i in range(1, MAX+1):
         sname = nomes[1]
 
     email = fake.email()
-    userType = weighted_choice([97, 1, 1, 1],typesOfUsers)
+    userType = weighted_choice([97, 1, 1, 1], typesOfUsers)
     phone = random_phone_number()
     birthday = fake.date_of_birth(tzinfo=None, minimum_age=7, maximum_age=18)
     address = zbr['address']
-    photo = fake.url() + username+'.PNG'
+    photo = fake.url() + username + '.PNG'
     pLVL = 1
     sId = uuid.uuid4()
 
@@ -130,16 +131,17 @@ for i in range(1, MAX+1):
     parent2 = fake.profile()
     p2FullName = parent2['name']
     p2Phone = random_phone_number()
-    isFullFamily = weighted_choice([80,20],['true', 'false'])
-    studyGroup = random.choice([1,2,3,4,5])
+    isFullFamily = weighted_choice([80, 20], ['true', 'false'])
+    studyGroup = random.choice([1, 2, 3, 4, 5])
     financialCase = random.choice(['Intermediate class', 'Rich class', 'Poor class'])
-    medicalConditions = weighted_choice([80,20], ['Healthy', 'Cancer stage 3'])
-    studyYear = random.choice([1,2,3])
+    medicalConditions = weighted_choice([80, 20], ['Healthy', 'Cancer stage 3'])
+    studyYear = random.choice([1, 2, 3])
 
-    subject = random.choice(['Math','Physics','Chemistry','Biology','Sexual Education','Informatics','Arabic','English','French'])
+    subject = random.choice(
+        ['Math', 'Physics', 'Chemistry', 'Biology', 'Sexual Education', 'Informatics', 'Arabic', 'English', 'French'])
     midGrade = random.randint(20, 100)
-    finalGrade = random.randint(20,100)
-    overallGrade = int((midGrade +finalGrade)/2)
+    finalGrade = random.randint(20, 100)
+    overallGrade = int((midGrade + finalGrade) / 2)
     teacher = random.choice(arrayOfTeachers)
 
     zinj = """INSERT INTO %s ( sId,sName,sSurname,sAddress,sEmail,sPhone,sBirthday,sPhoto
@@ -149,21 +151,18 @@ for i in range(1, MAX+1):
            % (TABLE_STUDENTS, sId, fname, sname, address, email, phone, birthday, photo
               , isFullFamily, p1FullName, p1Phone, p2FullName, p2Phone, financialCase
               , medicalConditions, studyYear, studyGroup)
-   # print(zinj)
+    # print(zinj)
     session.execute(zinj)
 
     zinj = """INSERT INTO %s ( sId,sName,sSurname,subject,midGrade,finalGrade, overallGrade
                 ,teacher,p1FullName,p1Phone,p2FullName,p2Phone,studyYear,studyGroup)
-                VALUES (%s, '%s', '%s','%s', '%s', '%s','%s', '%s', '%s', '%s','%s', '%s', %s,'%s');""" \
-           % (TABLE_GRADES, sId,fname,sname,subject,midGrade,finalGrade, overallGrade
-            ,teacher,p1FullName,p1Phone,p2FullName,p2Phone,studyYear,studyGroup)
-    #print(zinj)
+                VALUES (%s, '%s', '%s','%s', %s, %s, %s, '%s', '%s', '%s','%s', '%s', %s,'%s');""" \
+           % (TABLE_GRADES, sId, fname, sname, subject, midGrade, finalGrade, overallGrade,
+              teacher, p1FullName, p1Phone, p2FullName, p2Phone, studyYear, studyGroup)
+    # print(zinj)
     session.execute(zinj)
 
-
-print('Time taken to generate tests is : ' + str(time.time()-t1) + ' SECONDS')
-
-
+print('Time taken to generate tests is : ' + str(time.time() - t1) + ' SECONDS')
 
 '''
 login, hashedPass, name, surname, userType,
