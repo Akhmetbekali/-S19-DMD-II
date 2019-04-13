@@ -5,7 +5,7 @@ coloredlogs.install()
 
 import warnings
 warnings.filterwarnings("ignore",
-                        category=DeprecationWarning)  # some cassandra shit is deprecated in python 3.7, suspend it
+                        category=DeprecationWarning)  # some cassandra features are deprecated in python 3.7, suspend it
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 
@@ -23,7 +23,7 @@ class CassandraDriver:
             logging.info("Flag was sat to True Initiating randomizing data please wait for ~1 minute")
             randomizeData(session=self.session)
         else:
-            logging.info("Flag was sat to False there will be no randomizing data")
+            logging.info("Flag was sat to False there will be no randomizing data\n")
 
     def get_near_by_grades(self, subject, grade, radius,
                            status='overallGrade'):  # this function returns the

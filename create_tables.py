@@ -3,17 +3,26 @@ coloredlogs.install()
 
 
 def create_session(session):
+    # session.execute("DROP ROLE IF EXISTS principal")
+    # session.execute("DROP ROLE IF EXISTS teacher")
+    # session.execute("DROP ROLE IF EXISTS clerk")
+    # session.execute("DROP ROLE IF EXISTS admin")
+
+    session.execute("CREATE ROLE IF NOT EXISTS admin WITH PASSWORD = 'admin' AND LOGIN = true AND SUPERUSER = true")
+    session.execute("CREATE ROLE IF NOT EXISTS principal WITH PASSWORD = 'principal' AND LOGIN = true")
+    session.execute("CREATE ROLE IF NOT EXISTS clerk WITH PASSWORD = 'clerk' AND LOGIN = true")
+    session.execute("CREATE ROLE IF NOT EXISTS teacher WITH PASSWORD = 'teacher' AND LOGIN = true")
+
     KEYSPACE = 'ESAS'
     TABLE_USERS = KEYSPACE + '.Users'
     TABLE_STUDENTS = KEYSPACE + '.Students'
     TABLE_GRADES = KEYSPACE + '.Grades'
 
+    # session.execute("DROP TABLE ESAS.Grades;")
+    # session.execute("DROP TABLE ESAS.Students;")
+    # session.execute("DROP TABLE ESAS.Users;")
+
     # Keyspace
-    '''
-    session.execute("DROP TABLE ESAS.Grades;")
-    session.execute("DROP TABLE ESAS.Students;")
-    session.execute("DROP TABLE ESAS.Users;")
-    '''
 
     logging.info("Creating keyspace %s ..." % KEYSPACE)
     session.execute("""
@@ -107,6 +116,22 @@ def create_session(session):
     session.execute('CREATE INDEX IF NOT EXISTS i_midGrade ON %s (midGrade);' % TABLE_GRADES)
     session.execute('CREATE INDEX IF NOT EXISTS i_finalGrade ON %s (finalGrade);' % TABLE_GRADES)
     session.execute('CREATE INDEX IF NOT EXISTS i_teacher ON %s (teacher);' % TABLE_GRADES)
+
+    # Permissions
+    logging.info("Granting permissions...\n")
+
+    session.execute('GRANT SELECT ON %s to teacher;' % TABLE_STUDENTS)
+    session.execute('GRANT SELECT ON %s to teacher;' % TABLE_GRADES)
+    session.execute('GRANT MODIFY ON %s to teacher;' % TABLE_GRADES)
+
+    session.execute('GRANT SELECT ON KEYSPACE %s TO clerk;' % KEYSPACE)
+    session.execute('GRANT MODIFY ON KEYSPACE %s TO clerk;' % KEYSPACE)
+
+    session.execute('GRANT SELECT ON KEYSPACE %s TO principal;' % KEYSPACE)
+    session.execute('GRANT MODIFY ON KEYSPACE %s TO principal;' % KEYSPACE)
+
+    for perm in list(session.execute('LIST ALL PERMISSIONS')):
+        logging.info(perm)
 
     # Example of queries:
 

@@ -14,7 +14,9 @@ To run our project on your PC
 * Open command line and type 
 ```cassandra```
 
-* Open ```/usr/local/etc/cassandra/cassandra.yaml``` and change ```authenticator: AllowAllAuthenticator``` to ```authenticator: PasswordAuthenticator```
+* Open ```/usr/local/etc/cassandra/cassandra.yaml``` 
+    * Change ```authenticator: AllowAllAuthenticator``` to ```authenticator: PasswordAuthenticator```
+    * Change ```authorizer: AllowAllAuthorizer``` to ```authorizer: CassandraAuthorizer```
 
 * Now you are running cassandra server on 127.0.0.1:PORT
 
