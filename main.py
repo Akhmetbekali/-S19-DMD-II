@@ -79,6 +79,7 @@ session.execute("""
             medicalConditions text,
             studyYear tinyint,
             studyGroup text,
+
             PRIMARY KEY ((studyYear, studyGroup), sSurname, sName)
         );
         """ % TABLE_STUDENTS)
