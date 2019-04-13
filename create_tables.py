@@ -1,13 +1,5 @@
 import coloredlogs, logging
-
 coloredlogs.install()
-
-import warnings
-
-warnings.filterwarnings("ignore",
-                        category=DeprecationWarning)  # some cassandra shit is deprecated in python 3.7, suspend it
-
-from cassandra.cluster import Cluster
 
 
 def create_session(session):
@@ -116,19 +108,19 @@ def create_session(session):
     session.execute('CREATE INDEX IF NOT EXISTS i_finalGrade ON %s (finalGrade);' % TABLE_GRADES)
     session.execute('CREATE INDEX IF NOT EXISTS i_teacher ON %s (teacher);' % TABLE_GRADES)
 
-    # That's examples for you:
 
-    # Key fields must be inserted
 
-    session.execute("""
-        INSERT INTO %s (login, hashedPass, userType, surname, name)
-        VALUES ('%s', '%s', '%s', 'Name', 'Surname')
-        """ % (TABLE_USERS, 'John', 123, 'SuperType')
-                    )
+    # Example of queries:
 
-    rows = session.execute('SELECT * FROM %s;' % TABLE_USERS)
-    #for row in rows:
-        #print(row.login, row.hashedpass)  # p in hashedpass must not be capital for some reason...
+    # session.execute("""
+    #     INSERT INTO %s (login, hashedPass, userType, surname, name)
+    #     VALUES ('%s', '%s', '%s', 'Name', 'Surname')
+    #     """ % (TABLE_USERS, 'John', 123, 'SuperType')
+    # )
+
+    # rows = session.execute('SELECT * FROM %s;' % TABLE_USERS)
+    # for row in rows:
+    #     print(row.login, row.hashedpass)  # p in hashedpass must not be capital for some reason...
 
     # session.execute("""
     #     TRUNCATE TABLE %s;
