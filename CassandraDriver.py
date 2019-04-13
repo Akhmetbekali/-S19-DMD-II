@@ -3,6 +3,7 @@ from Randomizer import randomizeData
 from create_tables import create_session
 import matplotlib.pyplot as plt
 from datetime import date
+import math
 
 coloredlogs.install()
 
@@ -22,7 +23,7 @@ class CassandraDriver:
         print("Table creation was successful")
         if flag:
             print("Flag was sat to True Initiating randomizing data please wait for ~2 minute")
-            randomizeData(session=self.session)
+            randomizeData(session=self.session, MAX=100)
         else:
             print("Flag was sat to False there will be no randomizing data")
 
@@ -79,18 +80,14 @@ class CassandraDriver:
                 if self.search_in_list(age_list, age):
                     # print(self.get_age(j.sid))
                     rows.append([name, age, i, j.overallgrade, j.sid])
-                    cnt = hash_map.get(name)
+                    cnt = hash_map.get(j.sid)
                     if not cnt:
                         cnt = 0
-                        hash_map.update({name: cnt + 1})
+                        hash_map.update({j.sid: cnt + 1})
                     else:
                         cnt = cnt + 1
-                        hash_map.update(name=cnt)
-        res = []
-        for i in rows:
-            if hash_map.get(i[0]) == len(list_of_subjects):
-                res.append(i)
-        return res
+
+        return rows
 
     def create_table(self, name, cols):
         temp = ""
@@ -106,41 +103,56 @@ class CassandraDriver:
         print("""Creating new table %s please wait ...""" % name)
         self.session.execute(query)
         logging.info("Creating indexes for %s ..." % name)
-        self.session.execute('CREATE INDEX IF NOT EXISTS i_age ON %s (Age);' % name)
         self.session.execute('CREATE INDEX IF NOT EXISTS i_spacial_distance ON %s (Spacial_Distance);' % name)
+        self.session.execute("TRUNCATE TABLE ESAS.Spacial_Table;")
 
     def geospacial_search_get(self, list_of_subjects, age_list, plot_flag=False):
         rows = self.get_data_from_tables(list_of_subjects, age_list)
         N = len(rows)
         self.create_table('Spacial_Table',
-                          [['Student1', 'text'], ['Student2', 'text'], ['Spacial_Distance', 'double'], ['Age', 'int']])
+                          [['Student1', 'text'], ['Student2', 'text'], ['Spacial_Distance', 'double']])
         normalized_array = [[] for i in range(N)]
         students_list = []
+        counter = 0
         for i in rows:
             sid = i[4]
             name = i[0]
             age = i[1]
             if not self.search_in_list(students_list, sid):
                 students_list.append(sid)
-                ind = self.get_index(students_list, sid)
-                if len(normalized_array[ind]) == 0:
-                    normalized_array[ind].append(name)
-                    normalized_array[ind].append(age)
+            ind = self.get_index(students_list, sid)
+            if len(normalized_array[ind]) == 0:
+                normalized_array[ind].append(name)
+                normalized_array[ind].append(age)
+                normalized_array[ind].append(sid)
                 normalized_array[ind].append([i[2], i[3]])
+            else:
+                normalized_array[ind].append([i[2], i[3]])
+        for st1 in normalized_array:
+            if len(st1) == 0:
+                break
+            for st2 in normalized_array:
+                if len(st2) == 0:
+                    break
+                res = 0
+                if st1[2] == st2[2]:
+                    continue
+                for i in range(3, len(st1)):
+                    # print(st1[i][1])
+                    # print(st1[i][0])
+                    # input()
+                    res += abs(st1[i][1] - st2[i][1]) * abs(st1[i][1] - st2[i][1])
+                counter += 1
+                self.insert_into('Spacial_Table', counter, st1[0], st2[0], math.sqrt(res))
 
-        for i in range(0, N):
-            for j in range(i + 1, N):
-                sid = i * N + j
-                row1 = rows[i]
-                row2 = rows[j]
-                student1 = row1[0]
-                age1 = row1[1]
-                grade1 = row1[2]
-                student2 = row2[0]
-                age2 = row2[1]
-                grade2 = row2[2]
+        return self.session.execute("SELECT * FROM ESAS.spacial_table;")
 
-        return rows
+    def insert_into(self, table_name, sid, name1, name2, distance):
+        query = """INSERT INTO ESAS.%s (sid, Student1, Student2, Spacial_Distance) VALUES (%s, '%s', 
+        '%s',  %s);""" \
+                % (table_name, sid, name1, name2, distance)
+
+        self.session.execute(query)
 
 
 def showdata(data):
