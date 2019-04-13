@@ -130,7 +130,7 @@ def create_session(session):
     session.execute('GRANT SELECT ON KEYSPACE %s TO principal;' % KEYSPACE)
     session.execute('GRANT MODIFY ON KEYSPACE %s TO principal;' % KEYSPACE)
 
-    for perm in list(session.execute('LIST ALL PERMISSIONS')):
+    for perm in list(session.execute('LIST ALL PERMISSIONS'))[-7:]:
         logging.info(perm)
 
     # Example of queries:
