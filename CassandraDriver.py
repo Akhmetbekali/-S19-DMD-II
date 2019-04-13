@@ -44,10 +44,13 @@ class CassandraDriver:
         rows = []
 
         for i in list_of_subjects:
-            query = """SELECT * FROM ESAS.Grades WHERE subject = %s ALLOW FILTERING;""" \
+            query = """SELECT * FROM ESAS.Grades WHERE subject = '%s' ALLOW FILTERING;""" \
                     % i
-            self.session.execute(query)
-        return query
+            temp_array = self.session.execute(query)
+            for j in temp_array:
+                rows.append(j)
+
+        return rows
 
 
 def showdata(data):
@@ -57,7 +60,9 @@ def showdata(data):
 
 obj = CassandraDriver(flag=False)
 
-print(obj.geospacial_search_get(['Arabic', 'Math'], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]))
+rowData = obj.geospacial_search_get(['Arabic', 'Math'], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+for i in rowData:
+    print(i)
 
 # data = obj.students_in_birthdate_range('1900-10-10', '2010-01-01')
 # showdata(data)
