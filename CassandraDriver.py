@@ -1,16 +1,18 @@
-import coloredlogs, logging
+import coloredlogs
 from Randomizer import randomizeData
 from create_tables import create_session
+
 coloredlogs.install()
 
 import warnings
+
 warnings.filterwarnings("ignore",
                         category=DeprecationWarning)  # some cassandra shit is deprecated in python 3.7, suspend it
 from cassandra.cluster import Cluster
 
 
 class CassandraDriver:
-    def __init__(self,flag=True):
+    def __init__(self, flag=True):  # Flag is sat to true if user wants to call randomizer
         cluster = Cluster()
         self.session = cluster.connect()
         print("Creating tables here please wait and be patient ...")
@@ -21,7 +23,6 @@ class CassandraDriver:
             randomizeData(session=self.session)
         else:
             print("Flag was sat to False there will be no randomizing data")
-
 
     def get_near_by_grades(self, subject, grade, radius,
                            status='overallGrade'):  # this function returns the
@@ -41,15 +42,11 @@ class CassandraDriver:
 
     def geospacial_search_get(self, list_of_subjects, age_list, plot_flag=False):
         rows = []
-        query = "SELECT * FROM ESAS.Grades WHERE"
-        ok = True
-        for i in list_of_subjects:
-            if not ok:
-                query = query + " or "
-            temp = """subject = '%s' """, i
-            query += temp
-        query += ";"
 
+        for i in list_of_subjects:
+            query = """SELECT * FROM ESAS.Grades WHERE subject = %s ALLOW FILTERING;""" \
+                    % i
+            self.session.execute(query)
         return query
 
 
@@ -58,9 +55,9 @@ def showdata(data):
         print(row)
 
 
-obj = CassandraDriver()
+obj = CassandraDriver(flag=False)
 
-#print(obj.geospacial_search_get(['Arabic'], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]))
+print(obj.geospacial_search_get(['Arabic', 'Math'], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]))
 
 # data = obj.students_in_birthdate_range('1900-10-10', '2010-01-01')
 # showdata(data)
