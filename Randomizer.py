@@ -50,7 +50,7 @@ def weighted_choice(weights, choices):
             return choices[i]
 
 
-def randomizeData(session):
+def randomizeData(session, MAX):
     t1 = time.time()
 
     KEYSPACE = 'ESAS'
@@ -63,7 +63,7 @@ def randomizeData(session):
     session.execute('TRUNCATE TABLE ESAS.Students;')
 
     fake = Faker()
-    MAX = 1000  # Here you can set the max
+
     typesOfUsers = ['null', 'school principal', 'clerk', 'class teacher']
     arrayOfTeachers = []
     for i in range(1, 44 + 1):
@@ -138,8 +138,8 @@ def randomizeData(session):
         studyYear = random.choice([1, 2, 3])
 
         for subject in ['Math', 'Physics', 'Chemistry', 'Biology', 'Sexual Education', 'Informatics', 'Arabic', 'English', 'French']:
-            midGrade = random.randint(20, 100)
-            finalGrade = random.randint(20, 100)
+            midGrade = random.randint(55, 100)
+            finalGrade = random.randint(44, 100)
             overallGrade = int((midGrade + finalGrade) / 2)
             teacher = random.choice(arrayOfTeachers)
 
