@@ -113,7 +113,8 @@ def randomizeData(session):
         else:
             fname = nomes[0]
             sname = nomes[1]
-
+        if fname == "Dr.":
+            fanme = "Jafar"
         email = fake.email()
         userType = weighted_choice([97, 1, 1, 1], typesOfUsers)
         phone = random_phone_number()
@@ -136,30 +137,29 @@ def randomizeData(session):
         medicalConditions = weighted_choice([80, 20], ['Healthy', 'Cancer stage 3'])
         studyYear = random.choice([1, 2, 3])
 
-        subject = random.choice(
-            ['Math', 'Physics', 'Chemistry', 'Biology', 'Sexual Education', 'Informatics', 'Arabic', 'English', 'French'])
-        midGrade = random.randint(20, 100)
-        finalGrade = random.randint(20, 100)
-        overallGrade = int((midGrade + finalGrade) / 2)
-        teacher = random.choice(arrayOfTeachers)
+        for subject in ['Math', 'Physics', 'Chemistry', 'Biology', 'Sexual Education', 'Informatics', 'Arabic', 'English', 'French']:
+            midGrade = random.randint(20, 100)
+            finalGrade = random.randint(20, 100)
+            overallGrade = int((midGrade + finalGrade) / 2)
+            teacher = random.choice(arrayOfTeachers)
 
-        zinj = """INSERT INTO %s ( sId,sName,sSurname,sAddress,sEmail,sPhone,sBirthday,sPhoto
-        ,isFullFamily,p1FullName,p1Phone,p2FullName,p2Phone,financialCase
-        ,medicalConditions,studyYear,studyGroup)
-                    VALUES (%s, '%s', '%s','%s', '%s', '%s','%s', '%s', %s, '%s','%s', '%s', '%s','%s', '%s', %s, '%s');""" \
-               % (TABLE_STUDENTS, sId, fname, sname, address, email, phone, birthday, photo
-                  , isFullFamily, p1FullName, p1Phone, p2FullName, p2Phone, financialCase
-                  , medicalConditions, studyYear, studyGroup)
-        # print(zinj)
-        session.execute(zinj)
+            zinj = """INSERT INTO %s ( sId,sName,sSurname,sAddress,sEmail,sPhone,sBirthday,sPhoto
+            ,isFullFamily,p1FullName,p1Phone,p2FullName,p2Phone,financialCase
+            ,medicalConditions,studyYear,studyGroup)
+                        VALUES (%s, '%s', '%s','%s', '%s', '%s','%s', '%s', %s, '%s','%s', '%s', '%s','%s', '%s', %s, '%s');""" \
+                   % (TABLE_STUDENTS, sId, fname, sname, address, email, phone, birthday, photo
+                      , isFullFamily, p1FullName, p1Phone, p2FullName, p2Phone, financialCase
+                      , medicalConditions, studyYear, studyGroup)
+            # print(zinj)
+            session.execute(zinj)
 
-        zinj = """INSERT INTO %s ( sId,sName,sSurname,subject,midGrade,finalGrade, overallGrade
-                    ,teacher,p1FullName,p1Phone,p2FullName,p2Phone,studyYear,studyGroup)
-                    VALUES (%s, '%s', '%s','%s', %s, %s, %s, '%s', '%s', '%s','%s', '%s', %s,'%s');""" \
-               % (TABLE_GRADES, sId, fname, sname, subject, midGrade, finalGrade, overallGrade,
-                  teacher, p1FullName, p1Phone, p2FullName, p2Phone, studyYear, studyGroup)
-        # print(zinj)
-        session.execute(zinj)
+            zinj = """INSERT INTO %s ( sId,sName,sSurname,subject,midGrade,finalGrade, overallGrade
+                        ,teacher,p1FullName,p1Phone,p2FullName,p2Phone,studyYear,studyGroup)
+                        VALUES (%s, '%s', '%s','%s', %s, %s, %s, '%s', '%s', '%s','%s', '%s', %s,'%s');""" \
+                   % (TABLE_GRADES, sId, fname, sname, subject, midGrade, finalGrade, overallGrade,
+                      teacher, p1FullName, p1Phone, p2FullName, p2Phone, studyYear, studyGroup)
+            # print(zinj)
+            session.execute(zinj)
 
     print('Time taken to generate tests is : ' + str(time.time() - t1) + ' SECONDS')
 
