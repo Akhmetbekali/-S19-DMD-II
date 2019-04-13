@@ -103,12 +103,10 @@ def create_session(session):
             );
             """ % TABLE_GRADES)
 
-    logging.info("Creating indexes for %s ..." % TABLE_GRADES)
+    logging.info("Creating indexes for %s ...\n" % TABLE_GRADES)
     session.execute('CREATE INDEX IF NOT EXISTS i_midGrade ON %s (midGrade);' % TABLE_GRADES)
     session.execute('CREATE INDEX IF NOT EXISTS i_finalGrade ON %s (finalGrade);' % TABLE_GRADES)
     session.execute('CREATE INDEX IF NOT EXISTS i_teacher ON %s (teacher);' % TABLE_GRADES)
-
-
 
     # Example of queries:
 
@@ -119,8 +117,8 @@ def create_session(session):
     # )
 
     # rows = session.execute('SELECT * FROM %s;' % TABLE_USERS)
-    # for row in rows:
-    #     print(row.login, row.hashedpass)  # p in hashedpass must not be capital for some reason...
+    #for row in rows:
+        #print(row.login, row.hashedpass)  # p in hashedpass must not be capital for some reason...
 
     # session.execute("""
     #     TRUNCATE TABLE %s;

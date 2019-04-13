@@ -1,26 +1,29 @@
 from Randomizer import randomizeData
 from create_tables import create_session
-import coloredlogs
+import coloredlogs, logging
 coloredlogs.install()
 
 import warnings
 warnings.filterwarnings("ignore",
                         category=DeprecationWarning)  # some cassandra shit is deprecated in python 3.7, suspend it
 from cassandra.cluster import Cluster
+from cassandra.auth import PlainTextAuthProvider
 
 
 class CassandraDriver:
     def __init__(self, flag=True):  # Flag is sat to true if user wants to call randomizer
-        cluster = Cluster()
+        logging.info("Logging in ...\n")
+        auth_provider = PlainTextAuthProvider(username='cassandra', password='cassandra')
+        cluster = Cluster(auth_provider=auth_provider)
         self.session = cluster.connect()
-        print("Creating tables here please wait and be patient ...")
+        logging.info("Creating tables here please wait and be patient ...\n")
         create_session(session=self.session)
-        print("Table creation was successful")
+        logging.info("Table creation was successful")
         if flag:
-            print("Flag was sat to True Initiating randomizing data please wait for ~1 minute")
+            logging.info("Flag was sat to True Initiating randomizing data please wait for ~1 minute")
             randomizeData(session=self.session)
         else:
-            print("Flag was sat to False there will be no randomizing data")
+            logging.info("Flag was sat to False there will be no randomizing data")
 
     def get_near_by_grades(self, subject, grade, radius,
                            status='overallGrade'):  # this function returns the
