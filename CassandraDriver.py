@@ -151,6 +151,7 @@ class CassandraDriver:
         return result
 
     def geospacial_search_get(self, list_of_subjects, age_list, plot_flag=False):
+        return
         
 
 
