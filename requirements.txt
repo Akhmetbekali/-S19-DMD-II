@@ -1,4 +1,5 @@
-cassandra-driver
-scales
-coloredlogs
-faker
+pip3 install cassandra-driver
+pip3 install scales
+pip3 install coloredlogs
+pip install faker
+pip install matplotlib
