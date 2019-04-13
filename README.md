@@ -21,17 +21,11 @@ To run our project on your PC
 * Now you have to add packages for the project to run correctly
 note order of download is not important.
 
-``` pip3 install cassandra-driver``` 
-
-```pip3 install scales```
-
-```pip3 install coloredlogs```
-
-```pip install faker```
+``` pip3 install -r requirements.txt ```
 
 * Now make your working directory is ```-S19-DMD-II``` and run the following script
 
-```python main.py ```
+```python CassandraDriver.py ```
 - this will create the tables and index these tables.
 
 * To populate the tables with -somehow- random data run

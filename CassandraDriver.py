@@ -1,11 +1,9 @@
-import coloredlogs
 from Randomizer import randomizeData
 from create_tables import create_session
-
+import coloredlogs
 coloredlogs.install()
 
 import warnings
-
 warnings.filterwarnings("ignore",
                         category=DeprecationWarning)  # some cassandra shit is deprecated in python 3.7, suspend it
 from cassandra.cluster import Cluster
@@ -31,13 +29,13 @@ class CassandraDriver:
         assert (status == "overallGrade" or status == "finalGrade" or status == "midGrade")
         query = """SELECT * FROM ESAS.Grades WHERE %s >= %s and %s <= %s and subject = '%s' ALLOW FILTERING;""" \
                 % (status, grade - radius, status, grade + radius, subject)
-        result = self.self.session.execute(query)
+        result = self.session.execute(query)
         return result
 
     def students_in_birthdate_range(self, date1, date2):
         query = """SELECT * FROM ESAS.Students WHERE sBirthday >= '%s' and sBirthday <= '%s' ALLOW FILTERING;""" % \
                 (date1, date2)
-        result = self.self.session.execute(query)
+        result = self.session.execute(query)
         return result
 
     def geospacial_search_get(self, list_of_subjects, age_list, plot_flag=False):
