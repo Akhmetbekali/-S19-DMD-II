@@ -3,6 +3,7 @@ from Randomizer import randomizeData
 from create_tables import create_session
 from datetime import date
 import math
+from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 
 coloredlogs.install()
@@ -197,11 +198,8 @@ def showdata(data):
 
 obj = CassandraDriver(flag=False)
 
-rowData = obj.geospacial_search_get(['Arabic', 'Math'], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
-for i in rowData:
-    print(i)
-
-
-# data = obj.students_in_birthdate_range('1900-10-10', '2010-01-01')
-# showdata(data)
+rowData = obj.geospacial_search_get(['Arabic', 'Math'], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
+obj.show_graph(['Arabic', 'Math'])
+# data = obj.students_in_birthdate_range('1900-10-10', '2010-01-01')¶
+# showdata(data)¶
 # print(data)
