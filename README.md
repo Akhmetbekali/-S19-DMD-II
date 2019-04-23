@@ -2,7 +2,9 @@
 
 ## Cassandra Project for Databases and Data Modeling Class 2019
 
-In the project we have created database schema that best suits apache cassandra,
+In the project we have created database schema that best suits apache cassandra.
+
+### [Documentation](DOCUMENTATION.md)
 
 To run our project on your PC
 
