@@ -22,7 +22,7 @@ from cassandra.auth import PlainTextAuthProvider
 
 
 class CassandraDriver:
-    def __init__(self, flag=True):  # Flag is sat to true if user wants to call randomizer
+    def __init__(self, flag=False):  # Flag is sat to true if user wants to call randomizer
         logging.info("Logging in ...\n")
         auth_provider = PlainTextAuthProvider(username='cassandra', password='cassandra')
         cluster = Cluster(auth_provider=auth_provider)
@@ -244,7 +244,7 @@ class CassandraDriver:
         self.sort_near_me()
         print("HRY")
         print(str(len(X)) + " " + str(len(Y)) + " " + str(len(Z)))
-        Xp, Yp, Zp = [0 for i in range(N)], [0 for i in range(N)], [0 for i in range(N)]
+        Xp, Yp, Zp = [55 for i in range(N)], [66 for i in range(N)], [12 for i in range(N)]
         for i in range(0, min(N, 100)):
             Xp[i], Yp[i], Zp[i] = X[i], Y[i], Z[i]
         X, Y, Z = Xp, Yp, Zp
@@ -257,7 +257,6 @@ class CassandraDriver:
         ax.set_ylabel(list_of_subjects[1] + " grade")
         ax.set_zlabel("age")
         plt.show()
-
 
 def showdata(data):
     for row in data:
