@@ -278,9 +278,10 @@ def showdata(data):
 
 
 t1 = time.time()
-obj = CassandraDriver(flag=True)
+obj = CassandraDriver(flag=False)
 
-rowData = obj.geospacial_search_get('2834cae4-7e3c-4d28-9e59-568b3e7fe4ee', ['Arabic', 'Math'],
+#                                    v Put cid from your ESAS.Students v
+rowData = obj.geospacial_search_get('7cec9dea-3565-4199-9347-6e6140a7882a', ['Arabic', 'Math'],
                                     [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
 obj.show_graph(['Arabic', 'Math'])
 
