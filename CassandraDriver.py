@@ -40,7 +40,7 @@ class CassandraDriver:
 
         if flag:
             logging.info("Flag was sat to True Initiating randomizing data please wait for ~1 minute")
-            randomizeData(session=self.session, MAX=10)
+            randomizeData(session=self.session, MAX=1000)
         else:
             logging.info("Flag was sat to False there will be no randomizing data\n")
 
@@ -118,12 +118,13 @@ class CassandraDriver:
                         PRIMARY KEY (sId)
                     );
                     """ % (name, temp)
+
+        logging.info("Creating new table %s please wait ..." % name)
+        self.session.execute(query)
         self.session.execute('GRANT SELECT ON ESAS.%s TO clerk;' % name)
         self.session.execute('GRANT SELECT ON ESAS.%s TO principal;' % name)
         self.session.execute('GRANT SELECT ON ESAS.%s TO teacher;' % name)
-        logging.info("Creating new table %s please wait ..." % name)
 
-        self.session.execute(query)
         logging.info("Creating indexes for %s ..." % name)
         self.session.execute('CREATE INDEX IF NOT EXISTS i_spacial_distance ON %s (Spacial_Distance);' % name)
         self.session.execute("TRUNCATE TABLE ESAS.Spacial_Table;")
@@ -270,7 +271,7 @@ def showdata(data):
 
 
 t1 = time.time()
-obj = CassandraDriver(flag=False)
+obj = CassandraDriver(flag=True)
 
 rowData = obj.geospacial_search_get('92bb3d51-a474-4a07-8e4a-28a8a02de639', ['Arabic', 'Math'],
                                     [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
