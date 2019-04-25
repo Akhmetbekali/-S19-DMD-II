@@ -120,15 +120,16 @@ def create_session(session):
     # Permissions
     logging.info("Granting permissions...\n")
 
-    session.execute('GRANT SELECT ON %s to teacher;' % TABLE_STUDENTS)
-    session.execute('GRANT SELECT ON %s to teacher;' % TABLE_GRADES)
+    session.execute("GRANT ALL PERMISSIONS ON ALL KEYSPACES TO admin;")
+
+    session.execute('GRANT MODIFY ON %s to teacher;' % TABLE_STUDENTS)
     session.execute('GRANT MODIFY ON %s to teacher;' % TABLE_GRADES)
 
-    session.execute('GRANT SELECT ON KEYSPACE %s TO clerk;' % KEYSPACE)
-    session.execute('GRANT MODIFY ON KEYSPACE %s TO clerk;' % KEYSPACE)
+    session.execute('GRANT MODIFY ON %s TO clerk;' % TABLE_USERS)
+    session.execute('GRANT MODIFY ON %s TO clerk;' % TABLE_STUDENTS)
 
-    session.execute('GRANT SELECT ON KEYSPACE %s TO principal;' % KEYSPACE)
-    session.execute('GRANT MODIFY ON KEYSPACE %s TO principal;' % KEYSPACE)
+    session.execute('GRANT SELECT ON %s TO principal;' % TABLE_GRADES)
+    session.execute('GRANT SELECT ON %s TO principal;' % TABLE_STUDENTS)
 
     for perm in list(session.execute('LIST ALL PERMISSIONS'))[-7:]:
         logging.info(perm)

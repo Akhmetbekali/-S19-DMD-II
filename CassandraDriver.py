@@ -18,6 +18,7 @@ from cassandra.auth import PlainTextAuthProvider
 class CassandraDriver:
     def __init__(self, flag=True):  # Flag is sat to true if user wants to call randomizer
         logging.info("Logging in ...\n")
+
         auth_provider = PlainTextAuthProvider(username='cassandra', password='cassandra')
         cluster = Cluster(auth_provider=auth_provider)
         self.session = cluster.connect()
@@ -26,6 +27,13 @@ class CassandraDriver:
         logging.info("Creating tables here please wait and be patient ...\n")
         create_session(session=self.session)
         logging.info("Table creation was successful")
+
+        auth_provider = PlainTextAuthProvider(username='admin', password='admin')
+        cluster = Cluster(auth_provider=auth_provider)
+        self.session = cluster.connect()
+        self.session.execute('USE ESAS')
+        self.session.execute('DROP ROLE IF EXISTS cassandra')
+        self.session.execute("CREATE ROLE IF NOT EXISTS cassandra WITH PASSWORD = 'cassandra' AND LOGIN = true AND SUPERUSER = true")
 
         if flag:
             logging.info("Flag was sat to True Initiating randomizing data please wait for ~1 minute")
@@ -106,7 +114,11 @@ class CassandraDriver:
                         PRIMARY KEY (sId)
                     );
                     """ % (name, temp)
-        print("""Creating new table %s please wait ...""" % name)
+        self.session.execute('GRANT SELECT ON ESAS.%s TO clerk;' % name)
+        self.session.execute('GRANT SELECT ON ESAS.%s TO principal;' % name)
+        self.session.execute('GRANT SELECT ON ESAS.%s TO teacher;' % name)
+        logging.info("Creating new table %s please wait ..." % name)
+
         self.session.execute(query)
         logging.info("Creating indexes for %s ..." % name)
         self.session.execute('CREATE INDEX IF NOT EXISTS i_spacial_distance ON %s (Spacial_Distance);' % name)
