@@ -1,15 +1,12 @@
 import time
 
 import coloredlogs, logging
-from mpl_toolkits.mplot3d import Axes3D
 from Randomizer import randomizeData
 from create_tables import create_session
-import matplotlib.pyplot as plt
 from datetime import date
 import math
 from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
-import numpy as np
 
 coloredlogs.install()
 

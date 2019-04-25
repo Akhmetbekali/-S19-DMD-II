@@ -1,9 +1,7 @@
 from faker import Faker
-from cassandra.cluster import Cluster
 import random
 from random import randint
 import uuid
-import math
 import time
 
 
