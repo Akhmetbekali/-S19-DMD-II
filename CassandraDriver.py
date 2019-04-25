@@ -129,7 +129,7 @@ class CassandraDriver:
         self.session.execute('CREATE INDEX IF NOT EXISTS i_spacial_distance ON %s (Spacial_Distance);' % name)
         self.session.execute("TRUNCATE TABLE ESAS.Spacial_Table;")
 
-    def geospacial_search_get(self, student_id, list_of_subjects, age_list, plot_flag=False):
+    def geospacial_search_get(self, student_id, list_of_subjects, age_list, plot_flag=False, geo_calculate_flag=False):
         rows = self.get_data_from_tables(list_of_subjects, age_list)
         N = len(rows)
 
@@ -138,9 +138,9 @@ class CassandraDriver:
                 temp = rows[0]
                 rows[0] = rows[i]
                 rows[i] = temp
-
-        self.create_table('Spacial_Table',
-                          [['Student1', 'text'], ['Student2', 'text'], ['Spacial_Distance', 'double']])
+        if geo_calculate_flag:
+            self.create_table('Spacial_Table',
+                              [['Student1', 'text'], ['Student2', 'text'], ['Spacial_Distance', 'double']])
         normalized_array = [[] for i in range(N)]
         students_list = []
         counter = 0
@@ -200,7 +200,8 @@ class CassandraDriver:
         for i in range(0, min(N, 100)):
             zbr.append(normalized_array[i])
         normalized_array = zbr
-
+        if geo_calculate_flag == False:
+            return
         for st1 in normalized_array:
             if len(st1) == 0:
                 break
@@ -237,9 +238,10 @@ class CassandraDriver:
     def sort_near_me(self):
         X, Y, Z = self.plot_array
         N = len(X)
+        print(N)
         for i in range(N):
             for j in range(i, N):
-                if self.distance([X[i], Y[i], Z[i]], self.chosen_one) < self.distance([X[j], Y[j], Z[j]],
+                if self.distance([X[i], Y[i], Z[i]], self.chosen_one) > self.distance([X[j], Y[j], Z[j]],
                                                                                       self.chosen_one):
                     temp = X[i], Y[i], Z[i]
                     X[i], Y[i], Z[i] = X[j], Y[j], Z[j]
@@ -269,6 +271,7 @@ class CassandraDriver:
         ax.set_zlabel("age")
         plt.show()
 
+
 def showdata(data):
     for row in data:
         print(row)
@@ -277,7 +280,7 @@ def showdata(data):
 t1 = time.time()
 obj = CassandraDriver(flag=True)
 
-rowData = obj.geospacial_search_get('6b57c478-0852-4719-a543-e748940fd54d', ['Arabic', 'Math'],
+rowData = obj.geospacial_search_get('2834cae4-7e3c-4d28-9e59-568b3e7fe4ee', ['Arabic', 'Math'],
                                     [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
 obj.show_graph(['Arabic', 'Math'])
 

@@ -136,8 +136,8 @@ def randomizeData(session, MAX):
         studyYear = random.choice([1, 2, 3])
 
         for subject in ['Math', 'Physics', 'Chemistry', 'Biology', 'Sexual Education', 'Informatics', 'Arabic', 'English', 'French']:
-            midGrade = random.randint(55, 100)
-            finalGrade = random.randint(44, 100)
+            midGrade = random.randint(30, 100)
+            finalGrade = random.randint(30, 100)
             overallGrade = int((midGrade + finalGrade) / 2)
             teacher = random.choice(arrayOfTeachers)
 
