@@ -115,7 +115,7 @@ class CassandraDriver:
         self.session.execute('CREATE INDEX IF NOT EXISTS i_spacial_distance ON %s (Spacial_Distance);' % name)
         self.session.execute("TRUNCATE TABLE ESAS.Spacial_Table;")
 
-    def geospacial_search_get(self, student_id, list_of_subjects, age_list, plot_flag=False):
+    def geospacial_search_get(self, student_id, list_of_subjects, age_list, plot_flag=False, geo_calculate_flag= False):
         rows = self.get_data_from_tables(list_of_subjects, age_list)
         N = len(rows)
 
@@ -156,6 +156,8 @@ class CassandraDriver:
             else:
                 normalized_array[ind].append([i[2], i[3]])
 
+        if geo_calculate_flag == False:
+            return
         for i in normalized_array:
 
             if len(i) == 0:
