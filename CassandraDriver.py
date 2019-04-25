@@ -1,3 +1,5 @@
+import time
+
 import coloredlogs, logging
 from Randomizer import randomizeData
 from create_tables import create_session
@@ -9,6 +11,7 @@ import matplotlib.pyplot as plt
 coloredlogs.install()
 
 import warnings
+
 warnings.filterwarnings("ignore",
                         category=DeprecationWarning)  # some cassandra features are deprecated in python 3.7, suspend it
 from cassandra.cluster import Cluster
@@ -22,11 +25,10 @@ class CassandraDriver:
         cluster = Cluster(auth_provider=auth_provider)
         self.session = cluster.connect()
         self.plot_array = []
-
+        self.chosen_one = []
         logging.info("Creating tables here please wait and be patient ...\n")
         create_session(session=self.session)
         logging.info("Table creation was successful")
-
         if flag:
             logging.info("Flag was sat to True Initiating randomizing data please wait for ~1 minute")
             randomizeData(session=self.session, MAX=10)
@@ -99,6 +101,7 @@ class CassandraDriver:
         temp = ""
         for i in cols:
             temp += i[0] + " " + i[1] + ",\n"
+        self.session.execute("DROP TABLE IF EXISTS ESAS.%s;" % name)
         query = """
                     CREATE TABLE IF NOT EXISTS ESAS.%s (
                        %s
@@ -112,9 +115,20 @@ class CassandraDriver:
         self.session.execute('CREATE INDEX IF NOT EXISTS i_spacial_distance ON %s (Spacial_Distance);' % name)
         self.session.execute("TRUNCATE TABLE ESAS.Spacial_Table;")
 
-    def geospacial_search_get(self, list_of_subjects, age_list, plot_flag=False):
+    def geospacial_search_get(self, student_id, list_of_subjects, age_list, plot_flag=False):
         rows = self.get_data_from_tables(list_of_subjects, age_list)
         N = len(rows)
+
+        for i in range(0, N):
+            if str(rows[i][4]) == student_id:
+                temp = rows[0]
+                rows[0] = rows[i]
+                rows[i] = temp
+
+        zbr = []
+        for i in range(0, min(N, 1000)):
+            zbr.append(rows[i])
+        rows = zbr
         self.create_table('Spacial_Table',
                           [['Student1', 'text'], ['Student2', 'text'], ['Spacial_Distance', 'double']])
         normalized_array = [[] for i in range(N)]
@@ -126,13 +140,18 @@ class CassandraDriver:
         X = []
         Y = []
         Z = []
+        visited = [0 for i in range(N)]
         for i in rows:
+
             sid = i[4]
             name = i[0]
             age = i[1]
             if not self.search_in_list(students_list, sid):
                 students_list.append(sid)
             ind = self.get_index(students_list, sid)
+            """ if visited[ind] == 1:
+                continue
+            visited[ind] = 1"""
             if len(normalized_array[ind]) == 0:
                 normalized_array[ind].append(name)
                 normalized_array[ind].append(age)
@@ -144,6 +163,16 @@ class CassandraDriver:
         for i in normalized_array:
             if len(i) == 0:
                 break
+            if student_id == str(sid):
+                student_id = '-1'
+                for j in range(3, len(i)):
+                    element = i[j]
+                    if element[0] == list_of_subjects[0]:
+                        self.chosen_one.append(element[1])
+                    elif element[0] == list_of_subjects[1]:
+                        self.chosen_one.append(element[1])
+                self.chosen_one.append(i[1])
+
             for j in range(3, len(i)):
                 element = i[j]
                 if element[0] == list_of_subjects[0]:
@@ -166,6 +195,7 @@ class CassandraDriver:
                     # print(st1[i][1])
                     # print(st1[i][0])
                     # input()
+
                     res += abs(st1[i][1] - st2[i][1]) * abs(st1[i][1] - st2[i][1])
                 counter += 1
                 self.insert_into('Spacial_Table', counter, st1[0], st2[0], math.sqrt(res))
@@ -179,12 +209,42 @@ class CassandraDriver:
 
         self.session.execute(query)
 
+    def distance(self, PointA, PointB):
+        Dx = PointA[0] - PointB[0]
+        Dy = PointA[1] - PointB[1]
+        Dz = PointA[2] - PointB[2]
+        return math.sqrt(Dx * Dx + Dy * Dy + Dz * Dz)
+
+    def sort_near_me(self):
+        X, Y, Z = self.plot_array
+        N = len(X)
+        for i in range(N):
+            for j in range(i, N):
+                if self.distance([X[i], Y[i], Z[i]], self.chosen_one) < self.distance([X[j], Y[j], Z[j]],
+                                                                                      self.chosen_one):
+                    temp = X[i], Y[i], Z[i]
+                    X[i], Y[i], Z[i] = X[j], Y[j], Z[j]
+                    X[j], Y[j], Z[j] = temp
+        self.plot_array = X, Y, Z
+
     def show_graph(self, list_of_subjects):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
         # Data for a three-dimensional line
         X, Y, Z = self.plot_array
+        N = len(X)
+        self.sort_near_me()
+        print("HRY")
+        print(str(len(X)) + " " + str(len(Y)) + " " + str(len(Z)))
+        Xp, Yp, Zp = [0 for i in range(N)], [0 for i in range(N)], [0 for i in range(N)]
+        for i in range(0, min(N, 100)):
+            Xp[i], Yp[i], Zp[i] = X[i], Y[i], Z[i]
+        X, Y, Z = Xp, Yp, Zp
         ax.scatter(X, Y, Z, c='r', marker='o')
+
+        print([self.chosen_one])
+
+        ax.scatter([self.chosen_one[0]], [self.chosen_one[1]], [self.chosen_one[2]], c='b', marker='o')
         ax.set_xlabel(list_of_subjects[0] + " grade")
         ax.set_ylabel(list_of_subjects[1] + " grade")
         ax.set_zlabel("age")
@@ -196,10 +256,14 @@ def showdata(data):
         print(row)
 
 
+t1 = time.time()
 obj = CassandraDriver(flag=False)
 
-rowData = obj.geospacial_search_get(['Arabic', 'Math'], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
+rowData = obj.geospacial_search_get('92bb3d51-a474-4a07-8e4a-28a8a02de639', ['Arabic', 'Math'],
+                                    [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
 obj.show_graph(['Arabic', 'Math'])
 # data = obj.students_in_birthdate_range('1900-10-10', '2010-01-01')¶
 # showdata(data)¶
 # print(data)
+
+print('Time taken for geospacial search is : ' + str(time.time() - t1) + ' SECONDS')
