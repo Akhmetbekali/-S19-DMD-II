@@ -261,7 +261,7 @@ def showdata(data):
 
 
 t1 = time.time()
-obj = CassandraDriver(flag=False)
+obj = CassandraDriver(flag=True)
 
 rowData = obj.geospacial_search_get('6b57c478-0852-4719-a543-e748940fd54d', ['Arabic', 'Math'],
                                     [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])

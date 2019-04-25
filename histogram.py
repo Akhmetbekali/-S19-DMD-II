@@ -40,15 +40,20 @@ class Histo:
             study_year,
             subject))
 
-        study_gr_avg = [0 for i in range(5)]
-        cnt_ar = [0 for i in range(5)]
+        study_gr_avg = [0 for i in range(6)]
+        cnt_ar = [0 for i in range(6)]
         for i in rows:
-            ind = int(i['studygroup'])
-            study_gr_avg[i['studygroup']] += i['overallgrade']
-            cnt_ar[i['studygroup']] = cnt_ar[i['studygroup']] + 1
+            s = i.studygroup
+            grade = i.overallgrade
+            ind = int(s)
+            study_gr_avg[ind] += grade
+            cnt_ar[ind] = cnt_ar[ind] + 1
 
-        for i in range(5):
+        for i in range(6):
+            if cnt_ar[i] == 0:
+                continue
             study_gr_avg[i] = study_gr_avg[i] / cnt_ar[i]
+        print(study_gr_avg)
 
 
 obj = Histo(flag=False)
