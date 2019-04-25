@@ -108,7 +108,7 @@ def create_session(session):
                 p2Phone text,
                 studyYear tinyint,
                 studyGroup text,
-                PRIMARY KEY ((studyYear, studyGroup), subject, overallGrade, sSurname, sName)
+                PRIMARY KEY ((studyYear, studyGroup), subject, sSurname, sName)
             );
             """ % TABLE_GRADES)
 
