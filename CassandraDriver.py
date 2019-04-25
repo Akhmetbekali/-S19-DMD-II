@@ -19,7 +19,7 @@ from cassandra.auth import PlainTextAuthProvider
 
 
 class CassandraDriver:
-    def __init__(self, flag=True):  # Flag is sat to true if user wants to call randomizer
+    def __init__(self, flag=False):  # Flag is sat to true if user wants to call randomizer
         logging.info("Logging in ...\n")
 
         auth_provider = PlainTextAuthProvider(username='cassandra', password='cassandra')
@@ -139,10 +139,6 @@ class CassandraDriver:
                 rows[0] = rows[i]
                 rows[i] = temp
 
-        zbr = []
-        for i in range(0, min(N, 1000)):
-            zbr.append(rows[i])
-        rows = zbr
         self.create_table('Spacial_Table',
                           [['Student1', 'text'], ['Student2', 'text'], ['Spacial_Distance', 'double']])
         normalized_array = [[] for i in range(N)]
@@ -175,8 +171,10 @@ class CassandraDriver:
                 normalized_array[ind].append([i[2], i[3]])
 
         for i in normalized_array:
+
             if len(i) == 0:
                 break
+            sid = i[2]
             if student_id == str(sid):
                 student_id = '-1'
                 for j in range(3, len(i)):
@@ -195,6 +193,13 @@ class CassandraDriver:
                     Y.append(element[1])
             Z.append(i[1])
         self.plot_array = [X, Y, Z]
+        print(len(normalized_array))
+        print(self.chosen_one)
+
+        zbr = []
+        for i in range(0, min(N, 100)):
+            zbr.append(normalized_array[i])
+        normalized_array = zbr
 
         for st1 in normalized_array:
             if len(st1) == 0:
@@ -250,7 +255,7 @@ class CassandraDriver:
         self.sort_near_me()
         print("HRY")
         print(str(len(X)) + " " + str(len(Y)) + " " + str(len(Z)))
-        Xp, Yp, Zp = [0 for i in range(N)], [0 for i in range(N)], [0 for i in range(N)]
+        Xp, Yp, Zp = [55 for i in range(N)], [66 for i in range(N)], [12 for i in range(N)]
         for i in range(0, min(N, 100)):
             Xp[i], Yp[i], Zp[i] = X[i], Y[i], Z[i]
         X, Y, Z = Xp, Yp, Zp
@@ -264,7 +269,6 @@ class CassandraDriver:
         ax.set_zlabel("age")
         plt.show()
 
-
 def showdata(data):
     for row in data:
         print(row)
@@ -273,11 +277,8 @@ def showdata(data):
 t1 = time.time()
 obj = CassandraDriver(flag=True)
 
-rowData = obj.geospacial_search_get('92bb3d51-a474-4a07-8e4a-28a8a02de639', ['Arabic', 'Math'],
+rowData = obj.geospacial_search_get('6b57c478-0852-4719-a543-e748940fd54d', ['Arabic', 'Math'],
                                     [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
 obj.show_graph(['Arabic', 'Math'])
-# data = obj.students_in_birthdate_range('1900-10-10', '2010-01-01')¶
-# showdata(data)¶
-# print(data)
 
 print('Time taken for geospacial search is : ' + str(time.time() - t1) + ' SECONDS')
