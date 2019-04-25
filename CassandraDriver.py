@@ -34,7 +34,7 @@ class CassandraDriver:
         logging.info("Table creation was successful")
         if flag:
             logging.info("Flag was sat to True Initiating randomizing data please wait for ~1 minute")
-            randomizeData(session=self.session, MAX=10)
+            randomizeData(session=self.session, MAX=1000)
         else:
             logging.info("Flag was sat to False there will be no randomizing data\n")
 
@@ -128,10 +128,6 @@ class CassandraDriver:
                 rows[0] = rows[i]
                 rows[i] = temp
 
-        zbr = []
-        for i in range(0, min(N, 1000)):
-            zbr.append(rows[i])
-        rows = zbr
         self.create_table('Spacial_Table',
                           [['Student1', 'text'], ['Student2', 'text'], ['Spacial_Distance', 'double']])
         normalized_array = [[] for i in range(N)]
@@ -164,8 +160,10 @@ class CassandraDriver:
                 normalized_array[ind].append([i[2], i[3]])
 
         for i in normalized_array:
+
             if len(i) == 0:
                 break
+            sid = i[2]
             if student_id == str(sid):
                 student_id = '-1'
                 for j in range(3, len(i)):
@@ -186,6 +184,12 @@ class CassandraDriver:
         self.plot_array = [X, Y, Z]
         print(len(normalized_array))
         print(self.chosen_one)
+
+        zbr = []
+        for i in range(0, min(N, 100)):
+            zbr.append(normalized_array[i])
+        normalized_array = zbr
+
         for st1 in normalized_array:
             if len(st1) == 0:
                 break
@@ -263,7 +267,7 @@ def showdata(data):
 t1 = time.time()
 obj = CassandraDriver(flag=False)
 
-rowData = obj.geospacial_search_get('92bb3d51-a474-4a07-8e4a-28a8a02de639', ['Arabic', 'Math'],
+rowData = obj.geospacial_search_get('6b57c478-0852-4719-a543-e748940fd54d', ['Arabic', 'Math'],
                                     [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
 obj.show_graph(['Arabic', 'Math'])
 
