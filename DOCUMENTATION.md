@@ -15,6 +15,10 @@
       - [Columns](#columns-2)
       - [Primary Keys](#primary-keys-2)
   * [PERMISSIONS](#permissions)
+  * [Geospatial table creation](#geospatial-table-creation)
+      - [Geospatial distance function](#geospatial-distance-function)
+  * [Geospatial search](#geospatial-search)
+  * [Histogram](#histogram)
 
 
 
