@@ -160,4 +160,15 @@ Here the return value of this fucntion is the student that are near a given stud
 
 <img src="https://github.com/Akhmetbekali/-S19-DMD-II/blob/master/Figure_1.png"/>
 
+Here, blue dot refer to the chosen student by the user, and red dots represent the nearest collection of students!
+
+## Histogram 
+
+With using the histo python code you can represent the preformance of each study group in some user-chosen subject. Here you can benifit from this data by checking if some group has better education than the other, other instructors ... 
+
+A good example will be the following
+
+<img src="https://github.com/Akhmetbekali/-S19-DMD-II/blob/master/HistogramPng.png"/>
+
+You can see the difference of the average grade of study group is very low. You may use this data to conclude that the TA of study group number 2 is not doing so well with her/his job.
 
