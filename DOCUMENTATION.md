@@ -136,6 +136,7 @@ Spatial distance is calculated as square root of the sum of squares of differenc
 
  <img src="https://github.com/Akhmetbekali/-S19-DMD-II/blob/master/spatial%20formula.PNG" />
 
+Here we have used the euclidean distance with n dimensions (n common grade between student u, and student v).
 
 
 ## Geospatial search
