@@ -125,3 +125,19 @@ Cassandra has internal permissions implementation. A developer can define roles 
 |clerk |SELECT/MODIFY ON ESAS.Users|Can see and change Users table|
 |principal |SELECT ON ESAS.Grades|Can see Grades table|
 |principal |SELECT ON ESAS.Students|Can see Students table|
+
+## Geospatial table creation
+
+In this project we define a way of creating table that defines the relative academic preformance by each pair of students which represents the distance between the pair (academically speaking). We'll talk briefly about the logic behind this float number.
+
+#### Geospatial distance function
+
+Spatial distance is calculated as square root of the sum of squares of differences of grades between two students, check the following formula that summerize the spatial distance. 
+
+ <img src="https://github.com/Akhmetbekali/-S19-DMD-II/blob/master/spatial%20formula.PNG" />
+
+
+
+## Geospatial search
+
+
