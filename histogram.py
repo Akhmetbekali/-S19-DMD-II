@@ -5,9 +5,10 @@ from mpl_toolkits.mplot3d import Axes3D
 from Randomizer import randomizeData
 from create_tables import create_session
 import matplotlib.pyplot as plt
-from datetime import date
-import math
-from mpl_toolkits import mplot3d
+
+plt.rcdefaults()
+import numpy as np
+import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -37,8 +38,8 @@ class Histo:
         # query = """select studygroup, overallgrade from esas.grades where studyyear = %s and studygroup in ('1', '2', '3', '4', '5') and subject = '%s';""" % (study_year, subject)
         rows = self.session.execute(
             "select studygroup, overallgrade from esas.grades where studyyear = %s and studygroup in ('1', '2', '3', '4', '5') and subject = '%s';" % (
-            study_year,
-            subject))
+                study_year,
+                subject))
 
         study_gr_avg = [0 for i in range(6)]
         cnt_ar = [0 for i in range(6)]
@@ -52,8 +53,24 @@ class Histo:
         for i in range(6):
             if cnt_ar[i] == 0:
                 continue
-            study_gr_avg[i] = study_gr_avg[i] / cnt_ar[i]
+            study_gr_avg[i] = 5 * study_gr_avg[i] / (100 * cnt_ar[i])
         print(study_gr_avg)
+        out = []
+        for i in study_gr_avg:
+            if i == 0:
+                continue
+            out.append(i)
+
+        objects = ('1st group', '2nd group', '3rd group', '4th group', '5th group')
+        y_pos = np.arange(len(objects))
+        performance = out
+
+        plt.bar(y_pos, performance, align='center', alpha=0.5)
+        plt.xticks(y_pos, objects)
+        plt.ylabel('Performance')
+        plt.title('Average performance of each study group')
+
+        plt.show()
 
 
 obj = Histo(flag=False)
