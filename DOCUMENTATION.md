@@ -156,3 +156,8 @@ Here we have used the euclidean distance with n dimensions (n common grade betwe
 ## Geospatial search
 
 
+Here the return value of this fucntion is the student that are near a given student sorted by distance. After calling this function you can call another function via the same object. plotting these students give the user of our class an idea of the dispersion between students given a set of subjects and the dispresion due to age also.
+
+<img src="https://github.com/Akhmetbekali/-S19-DMD-II/blob/master/Figure_1.png"/>
+
+
