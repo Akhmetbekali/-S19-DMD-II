@@ -174,5 +174,5 @@ A good example will be the following
 
 <img src="https://github.com/Akhmetbekali/-S19-DMD-II/blob/master/HistogramPng.png"/>
 
-You can see the difference of the average grade of study group is very low. You may use this data to conclude that the TA of study group number 2 is not doing so well with her/his job.
+You can see that the average grade study group number 2 is very low. You may use this data to conclude that the TA of this study group  is not doing so well with her/his job.
 
