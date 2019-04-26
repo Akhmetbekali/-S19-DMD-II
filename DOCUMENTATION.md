@@ -26,9 +26,15 @@ The keyspace name in the project is ***ESAS***
 ## TABLES
 Tables are also referred to as Column Families. Tables contain a set of columns and a primary key, and they store data in a set of rows.
 
-There are 3 tables in the project
+There are 3 tables in the project.
+
+'Grades' and 'Students' has repeating data and it's exactly how complex data must be stored in Cassandra since it doesn't support JOINs whereas reading operations are optimised and data storage is cheap nowadays.
 
 ### ESAS.Users
+
+'User' table contains all information about employees(teachers, clerks, principals).
+They all can log in into the system using login and pass.
+
 #### Columns
 | Field name  | Data type | Explanation |
 | - | - | - |
@@ -53,6 +59,11 @@ There are 3 tables in the project
 ---
 
 ### ESAS.Students
+
+'Students' table contains information about students studying in the institution.
+They are uniquely identified by sId.
+Provides financial case of their parents and their contacts.
+
 #### Columns
 | Field name  | Data type | Explanation |
 | - | - | - |
@@ -84,6 +95,9 @@ There are 3 tables in the project
 ---
 
 ### ESAS.Grades
+
+'Grades' table provides information about assessments of all students.
+
 #### Columns
 | Field name  | Data type | Explanation |
 | - | - | - |
