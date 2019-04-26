@@ -119,8 +119,9 @@ Cassandra has internal permissions implementation. A developer can define roles 
 | Role | Permission | Explanation |
 | - | - | - |
 |admin |Superuser|Has access to the whole db|
-|teacher |SELECT ON ESAS.Students|Can see Student table|
+|teacher |SELECT/MODIFY ON ESAS.Students|Can see and change Student table|
 |teacher |SELECT/MODIFY ON ESAS.Grades|Can see and change Grades table|
-|clerk |SELECT/MODIFY ON ESAS|Can see and change all tables, but can not drop or add new tables|
-|principal |SELECT/MODIFY ON ESAS|Can see and change all tables, but can not drop or add new tables|
-
+|clerk |SELECT/MODIFY ON ESAS.Students|Can see and change Student table|
+|clerk |SELECT/MODIFY ON ESAS.Users|Can see and change Users table|
+|principal |SELECT ON ESAS.Grades|Can see Grades table|
+|principal |SELECT ON ESAS.Students|Can see Students table|
